@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("简繁转换器")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("喵拉布丁")]
-[assembly: AssemblyProduct("SimplifiedTraditionalConverter")]
+[assembly: AssemblyProduct("ChineseConverter")]
 [assembly: AssemblyCopyright("Copyright © 喵拉布丁 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

@@ -10,7 +10,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
 
-namespace SimplifiedTraditionalConverter
+namespace ChineseConverter
 {
     /// <summary>
     /// 主窗口类

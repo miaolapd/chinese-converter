@@ -6,7 +6,7 @@ using System.Xml;
 using System.IO;
 using System.Windows.Forms;
 
-namespace SimplifiedTraditionalConverter
+namespace ChineseConverter
 {
     /// <summary>
     /// 程序配置类

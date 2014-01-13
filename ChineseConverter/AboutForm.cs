@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace SimplifiedTraditionalConverter
+namespace ChineseConverter
 {
     public partial class AboutForm : Form
     {

@@ -5,7 +5,7 @@ using System.Text;
 using System.IO;
 using System.Net;
 
-namespace SimplifiedTraditionalConverter
+namespace ChineseConverter
 {
     #region Class IdentifyEncoding.....
     /// <summary>

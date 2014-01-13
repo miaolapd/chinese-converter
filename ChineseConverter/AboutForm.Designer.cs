@@ -1,4 +1,4 @@
-﻿namespace SimplifiedTraditionalConverter
+﻿namespace ChineseConverter
 {
     partial class AboutForm
     {
