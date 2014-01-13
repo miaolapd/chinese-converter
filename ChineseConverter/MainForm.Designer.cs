@@ -140,7 +140,7 @@
             this.cboConvertType.Name = "cboConvertType";
             this.cboConvertType.Size = new System.Drawing.Size(110, 20);
             this.cboConvertType.TabIndex = 0;
-            this.ttpCommon.SetToolTip(this.cboConvertType, "设置转换类型 (简繁互转、简繁转换为火星文)");
+            this.ttpCommon.SetToolTip(this.cboConvertType, "设置转换类型");
             this.cboConvertType.SelectedIndexChanged += new System.EventHandler(this.cboConvertType_SelectedIndexChanged);
             // 
             // lblFilePath
@@ -235,7 +235,7 @@
             this.grpSource.Location = new System.Drawing.Point(12, 108);
             this.grpSource.Name = "grpSource";
             this.grpSource.Size = new System.Drawing.Size(360, 467);
-            this.grpSource.TabIndex = 12;
+            this.grpSource.TabIndex = 0;
             this.grpSource.TabStop = false;
             this.grpSource.Text = "源文本";
             // 
