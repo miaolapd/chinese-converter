@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Xml;
-using System.IO;
-using System.Windows.Forms;
 
 namespace ChineseConverter
 {
@@ -13,12 +10,20 @@ namespace ChineseConverter
     /// </summary>
     public static class AppConfig
     {
-        /// <summary>配置文件根节点名称</summary>
-        public const string RootElementName = "Application";
+        /// <summary>默认文件后缀名</summary>
+        public const string DefaultFileExt = ".convert";
         /// <summary>配置文件名</summary>
-        public static string ConfigFileName = "AppConfig.xml";
-        /// <summary>XML文档类</summary>
-        private static XmlDocument AppDocument = null;
+        private const string ConfigFileName = "AppConfig.xml";
+
+        /// <summary>当前<see cref="XmlConfig"/>对象</summary>
+        private static XmlConfig Config = null;
+        private static int _convertType = 0;
+        private static int _convertMethod = 0;
+        private static int _saveEncoding = 0;
+        private static string _fileExt = DefaultFileExt;
+        private static bool _isExclude = false;
+        private static bool _isTopMost = false;
+        private static bool _isConvertFileName = false;
 
         /// <summary>
         /// 配置信息结构
@@ -31,9 +36,9 @@ namespace ChineseConverter
             public const string ConvertMethod = "ConvertMethod";
             /// <summary>保存编码配置项名称</summary>
             public const string SaveEncoding = "SaveEncoding";
-            /// <summary>文件后缀名类型配置项名称</summary>
+            /// <summary>文件后缀名配置项名称</summary>
             public const string FileExt = "FileExt";
-            /// <summary>是否排除(正则表达式)配置项名称</summary>
+            /// <summary>是否排除配置项名称</summary>
             public const string IsExclude = "IsExclude";
             /// <summary>是否总在最前配置项名称</summary>
             public const string IsTopMost = "IsTopMost";
@@ -53,28 +58,110 @@ namespace ChineseConverter
         }
 
         /// <summary>
-        /// 打开配置文件
+        /// 获取或设置转换类型
         /// </summary>
-        /// <returns>是否打开成功</returns>
-        public static bool Open()
+        public static int ConvertType
         {
-            AppDocument = new XmlDocument();
+            get { return _convertType; }
+            set
+            {
+                if (Config != null) Config.SetValue(ConfigInfo.ConvertType, value);
+            }
+        }
+
+        /// <summary>
+        /// 获取或设置转换方式
+        /// </summary>
+        public static int ConvertMethod
+        {
+            get { return _convertMethod; }
+            set
+            {
+                if (Config != null) Config.SetValue(ConfigInfo.ConvertMethod, value);
+            }
+        }
+
+        /// <summary>
+        /// 获取或设置保存编码
+        /// </summary>
+        public static int SaveEncoding
+        {
+            get { return _saveEncoding; }
+            set
+            {
+                if (Config != null) Config.SetValue(ConfigInfo.SaveEncoding, value);
+            }
+        }
+
+        /// <summary>
+        /// 获取或设置文件后缀名
+        /// </summary>
+        public static string FileExt
+        {
+            get { return _fileExt; }
+            set
+            {
+                if (Config != null) Config.SetValue(ConfigInfo.FileExt, value);
+            }
+        }
+
+        /// <summary>
+        /// 获取或设置是否排除
+        /// </summary>
+        public static bool IsExclude
+        {
+            get { return _isExclude; }
+            set
+            {
+                if (Config != null) Config.SetValue(ConfigInfo.IsExclude, value);
+            }
+        }
+
+        /// <summary>
+        /// 获取或设置是否总在最前
+        /// </summary>
+        public static bool IsTopMost
+        {
+            get { return _isTopMost; }
+            set
+            {
+                if (Config != null) Config.SetValue(ConfigInfo.IsTopMost, value);
+            }
+        }
+
+        /// <summary>
+        /// 获取或设置是否转换文件名
+        /// </summary>
+        public static bool IsConvertFileName
+        {
+            get { return _isConvertFileName; }
+            set
+            {
+                if (Config != null) Config.SetValue(ConfigInfo.IsConvertFileName, value);
+            }
+        }
+
+        /// <summary>
+        /// 读取配置文件
+        /// </summary>
+        /// <returns>是否读取成功</returns>
+        public static bool Read()
+        {
             try
             {
-                AppDocument.Load(ConfigPath);
+                Config = new XmlConfig(ConfigPath);
             }
-            catch(Exception)
+            catch (ApplicationException)
             {
-                if (!CreateConfigFile())
-                {
-                    MessageBox.Show("配置文件创建失败！", "操作失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return false;
-                }
-                else
-                {
-                    AppDocument.Load(ConfigPath);
-                }
+                return false;
             }
+            _convertType = Config.GetValue(ConfigInfo.ConvertType, 0);
+            _convertMethod = Config.GetValue(ConfigInfo.ConvertMethod, 0);
+            _saveEncoding = Config.GetValue(ConfigInfo.SaveEncoding, 0);
+            _fileExt = Config.GetValue(ConfigInfo.FileExt, DefaultFileExt);
+            _isExclude = Config.GetValue(ConfigInfo.IsExclude, false);
+            _isTopMost = Config.GetValue(ConfigInfo.IsTopMost, false);
+            _isConvertFileName = Config.GetValue(ConfigInfo.IsConvertFileName, false);
             return true;
         }
 
@@ -84,148 +171,9 @@ namespace ChineseConverter
         /// <returns>是否保存成功</returns>
         public static bool Save()
         {
-            try
-            {
-                AppDocument.Save(ConfigPath);
-            }
-            catch(Exception)
-            {
-                //MessageBox.Show("配置文件保存失败！", "操作失败", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-            return true;
+            if (Config != null) return Config.Save();
+            else return false;
         }
 
-        /// <summary>
-        /// 获取指定元素中的指定属性的值
-        /// </summary>
-        /// <param name="name">配置项</param>
-        /// <returns>配置值</returns>
-        public static string GetValue(string name, string defaultValue)
-        {
-            if (AppDocument == null) return defaultValue;
-            try
-            {
-                XmlNode node = AppDocument.SelectSingleNode(RootElementName).SelectSingleNode(name);
-                if (node == null) return defaultValue;
-                else return node.InnerText.Trim();
-            }
-            catch(Exception)
-            {
-                return defaultValue;
-            }
-        }
-
-        /// <summary>
-        /// 获取指定元素中的指定属性的值
-        /// </summary>
-        /// <param name="name">配置项</param>
-        /// <returns>配置值</returns>
-        public static int GetValue(string name, int defaultValue)
-        {
-            try
-            {
-                return Convert.ToInt32(GetValue(name, defaultValue.ToString()));
-            }
-            catch(Exception)
-            {
-                return defaultValue;
-            }
-        }
-
-        /// <summary>
-        /// 获取指定元素中的指定属性的值
-        /// </summary>
-        /// <param name="name">配置项</param>
-        /// <returns>配置值</returns>
-        public static bool GetValue(string name, bool defaultValue)
-        {
-            try
-            {
-                return Convert.ToBoolean(GetValue(name, defaultValue.ToString()));
-            }
-            catch (Exception)
-            {
-                return defaultValue;
-            }
-        }
-
-        /// <summary>
-        /// 设置指定元素中的指定属性的值
-        /// </summary>
-        /// <param name="name">配置项</param>
-        /// <param name="value">配置值</param>
-        public static bool SetValue(string name, string value)
-        {
-            if (AppDocument == null)
-            {
-                if (!Open()) return false;
-            }
-            try
-            {
-                XmlNode root = AppDocument.SelectSingleNode(RootElementName);
-                XmlNode node = root.SelectSingleNode(name);
-                if (node != null)
-                {
-                    node.InnerText = value;
-                }
-                else
-                {
-                    XmlElement elem = AppDocument.CreateElement(name);
-                    elem.InnerText = value;
-                    root.AppendChild(elem);
-                }
-            }
-            catch(Exception)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        /// <summary>
-        /// 设置指定元素中的指定属性的值
-        /// </summary>
-        /// <param name="name">配置项</param>
-        /// <param name="value">配置值</param>
-        public static bool SetValue(string name, int value)
-        {
-            return SetValue(name, value.ToString());
-        }
-
-        /// <summary>
-        /// 设置指定元素中的指定属性的值
-        /// </summary>
-        /// <param name="name">配置项</param>
-        /// <param name="value">配置值</param>
-        public static bool SetValue(string name, bool value)
-        {
-            return SetValue(name, value.ToString());
-        }
-
-        /// <summary>
-        /// 创建配置文件
-        /// </summary>
-        /// <returns>是否创建成功</returns>
-        private static bool CreateConfigFile()
-        {
-            XmlTextWriter xmlWriter = null;
-            try
-            {
-                xmlWriter = new XmlTextWriter(ConfigPath, Encoding.UTF8);
-                xmlWriter.Formatting = Formatting.Indented;
-                xmlWriter.WriteProcessingInstruction("xml", "version='1.0' encoding='UTF-8'");
-                xmlWriter.WriteStartElement(RootElementName);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-            finally
-            {
-                if (xmlWriter != null) xmlWriter.Close();
-            }
-            return true;
-        }
     }
 }

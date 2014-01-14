@@ -21,8 +21,6 @@ namespace ChineseConverter
         public const string DefaultRegexListFileName = "DefaultRegexList.txt";
         /// <summary>字符转换对照表文件名</summary>
         public const string ConvertListFileName = "ConvertList.txt";
-        /// <summary>默认文件后缀名</summary>
-        public const string DefaultFileExt = ".convert";
         /// <summary>转换类型枚举</summary>
         public enum ConvertType { Simplified, Traditional, HuoXingWen };
         /// <summary>转换方式枚举</summary>
@@ -351,10 +349,13 @@ namespace ChineseConverter
         /// </summary>
         private void ReadConfig()
         {
-            AppConfig.Open();
+            if(!AppConfig.Read())
+            {
+                ShowErrorMsg("读取配置文件失败！");
+            }
             try
             {
-                cboConvertType.SelectedIndex = AppConfig.GetValue(AppConfig.ConfigInfo.ConvertType, 0);
+                cboConvertType.SelectedIndex = AppConfig.ConvertType;
             }
             catch (ArgumentOutOfRangeException)
             {
@@ -362,7 +363,7 @@ namespace ChineseConverter
             }
             try
             {
-                cboConvertMethod.SelectedIndex = AppConfig.GetValue(AppConfig.ConfigInfo.ConvertMethod, 0);
+                cboConvertMethod.SelectedIndex = AppConfig.ConvertMethod;
             }
             catch (ArgumentOutOfRangeException)
             {
@@ -370,16 +371,17 @@ namespace ChineseConverter
             }
             try
             {
-                cboSaveEncoding.SelectedIndex = AppConfig.GetValue(AppConfig.ConfigInfo.SaveEncoding, 0);
+                cboSaveEncoding.SelectedIndex = AppConfig.SaveEncoding;
             }
             catch (ArgumentOutOfRangeException)
             {
                 cboSaveEncoding.SelectedIndex = 0;
             }
-            chkIsConvertFileName.Checked = AppConfig.GetValue(AppConfig.ConfigInfo.IsConvertFileName, false);
-            chkIsExclude.Checked = AppConfig.GetValue(AppConfig.ConfigInfo.IsExclude, false);
-            txtFileExt.Text = AppConfig.GetValue(AppConfig.ConfigInfo.FileExt, DefaultFileExt);
-            chkIsTopMost.Checked = AppConfig.GetValue(AppConfig.ConfigInfo.IsTopMost, false);
+            chkIsConvertFileName.Checked = AppConfig.IsConvertFileName;
+            chkIsExclude.Checked = AppConfig.IsExclude;
+            txtFileExt.Text = AppConfig.FileExt;
+            chkIsTopMost.Checked = AppConfig.IsTopMost;
+            cboReadEncoding.SelectedIndex = 0;
         }
 
         /// <summary>
@@ -422,7 +424,6 @@ namespace ChineseConverter
         /// </summary>
         private void MainForm_Load(object sender, EventArgs e)
         {
-            cboReadEncoding.SelectedIndex = 0;
             if (!ReadConvertList())
             {
                 ShowErrorMsg("字符转换对照表读取失败！\r\n可能原因：文件未找到、各行字符数不一致");
@@ -559,7 +560,7 @@ namespace ChineseConverter
             {
                 ShowErrorMsg("文件保存失败！");
             }
-            AppConfig.SetValue(AppConfig.ConfigInfo.FileExt, txtFileExt.Text.Trim());
+            AppConfig.FileExt = txtFileExt.Text.Trim();
         }
 
         /// <summary>
@@ -573,12 +574,20 @@ namespace ChineseConverter
         }
 
         /// <summary>
+        /// 当单击转换文本To源文本按钮时发生
+        /// </summary>
+        private void btnDestToSource_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        /// <summary>
         /// 当转换类型下拉列表选择项改变时发生
         /// </summary>
         private void cboConvertType_SelectedIndexChanged(object sender, EventArgs e)
         {
             ConvertText();
-            AppConfig.SetValue(AppConfig.ConfigInfo.ConvertType, cboConvertType.SelectedIndex);
+            AppConfig.ConvertType = cboConvertType.SelectedIndex;
         }
 
         /// <summary>
@@ -607,7 +616,7 @@ namespace ChineseConverter
                 txtDest.Clear();
                 cboReadEncoding.Enabled = true;
             }
-            AppConfig.SetValue(AppConfig.ConfigInfo.ConvertMethod, cboConvertMethod.SelectedIndex);
+            AppConfig.ConvertMethod = cboConvertMethod.SelectedIndex;
         }
 
         /// <summary>
@@ -615,7 +624,7 @@ namespace ChineseConverter
         /// </summary>
         private void chkIsConvertFileName_CheckedChanged(object sender, EventArgs e)
         {
-            AppConfig.SetValue(AppConfig.ConfigInfo.IsConvertFileName, chkIsConvertFileName.Checked);
+            AppConfig.IsConvertFileName = chkIsConvertFileName.Checked;
         }
 
         /// <summary>
@@ -623,7 +632,7 @@ namespace ChineseConverter
         /// </summary>
         private void cboSaveEncoding_SelectedIndexChanged(object sender, EventArgs e)
         {
-            AppConfig.SetValue(AppConfig.ConfigInfo.SaveEncoding, cboSaveEncoding.SelectedIndex);
+            AppConfig.SaveEncoding = cboSaveEncoding.SelectedIndex;
         }
 
         /// <summary>
@@ -656,7 +665,7 @@ namespace ChineseConverter
         private void chkIsExclude_CheckedChanged(object sender, EventArgs e)
         {
             if (cboRegex.Text.Trim() != String.Empty) btnConvert_Click(null, null);
-            AppConfig.SetValue(AppConfig.ConfigInfo.IsExclude, chkIsExclude.Checked);
+            AppConfig.IsExclude = chkIsExclude.Checked;
         }
 
         /// <summary>
@@ -665,7 +674,7 @@ namespace ChineseConverter
         private void chkIsTopMost_CheckedChanged(object sender, EventArgs e)
         {
             TopMost = chkIsTopMost.Checked;
-            AppConfig.SetValue(AppConfig.ConfigInfo.IsTopMost, chkIsTopMost.Checked);
+            AppConfig.IsTopMost = chkIsTopMost.Checked;
         }
 
         /// <summary>
@@ -717,6 +726,14 @@ namespace ChineseConverter
             }
         }
 
+        /// <summary>
+        /// 当字符对照表下拉列表选择项改变时发生
+        /// </summary>
+        private void cboConvertMaps_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
         #region 主菜单事件
 
         /// <summary>
@@ -742,7 +759,7 @@ namespace ChineseConverter
         /// <summary>
         /// 当单击保存结果菜单项时发生
         /// </summary>
-        private void tsmiSaveFile_Click(object sender, EventArgs e)
+        private void tsmiSaveResult_Click(object sender, EventArgs e)
         {
             if (txtDest.Text == String.Empty) return;
             if (SourceFilePath != String.Empty)
@@ -767,11 +784,10 @@ namespace ChineseConverter
         {
             try
             {
-                cboReadEncoding.SelectedIndex = 0;
                 File.Delete(AppConfig.ConfigPath);
-                ReadConfig();
             }
             catch (Exception) { }
+            ReadConfig();
         }
 
         /// <summary>
