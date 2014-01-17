@@ -98,10 +98,13 @@
     <Content Include="ConverterMaps\01.Wikipedia.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="ConverterMaps\02.HuoXingWen.xml">
+    <Content Include="ConverterMaps\02.Kanzi.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="ConverterMaps\03.Tools.xml">
+    <Content Include="ConverterMaps\03.HuoXingWen.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="ConverterMaps\04.Tools.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="DefaultRegexList.txt">

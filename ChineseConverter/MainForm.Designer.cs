@@ -87,9 +87,9 @@
             // 
             this.grpConvertMethod.Controls.Add(this.chkIsConvertFileName);
             this.grpConvertMethod.Controls.Add(this.cboConvertMethod);
-            this.grpConvertMethod.Location = new System.Drawing.Point(296, 28);
+            this.grpConvertMethod.Location = new System.Drawing.Point(315, 28);
             this.grpConvertMethod.Name = "grpConvertMethod";
-            this.grpConvertMethod.Size = new System.Drawing.Size(197, 44);
+            this.grpConvertMethod.Size = new System.Drawing.Size(178, 44);
             this.grpConvertMethod.TabIndex = 9;
             this.grpConvertMethod.TabStop = false;
             this.grpConvertMethod.Text = "转换方式";
@@ -98,7 +98,7 @@
             // 
             this.chkIsConvertFileName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chkIsConvertFileName.AutoSize = true;
-            this.chkIsConvertFileName.Location = new System.Drawing.Point(107, 19);
+            this.chkIsConvertFileName.Location = new System.Drawing.Point(88, 19);
             this.chkIsConvertFileName.Name = "chkIsConvertFileName";
             this.chkIsConvertFileName.Size = new System.Drawing.Size(84, 16);
             this.chkIsConvertFileName.TabIndex = 1;
@@ -118,7 +118,7 @@
             "转换文本"});
             this.cboConvertMethod.Location = new System.Drawing.Point(6, 17);
             this.cboConvertMethod.Name = "cboConvertMethod";
-            this.cboConvertMethod.Size = new System.Drawing.Size(95, 20);
+            this.cboConvertMethod.Size = new System.Drawing.Size(76, 20);
             this.cboConvertMethod.TabIndex = 0;
             this.ttpCommon.SetToolTip(this.cboConvertMethod, "设置转换方式");
             this.cboConvertMethod.SelectedIndexChanged += new System.EventHandler(this.cboConvertMethod_SelectedIndexChanged);
@@ -502,7 +502,7 @@
             this.cboConverterMapsList.FormattingEnabled = true;
             this.cboConverterMapsList.Location = new System.Drawing.Point(6, 17);
             this.cboConverterMapsList.Name = "cboConverterMapsList";
-            this.cboConverterMapsList.Size = new System.Drawing.Size(124, 20);
+            this.cboConverterMapsList.Size = new System.Drawing.Size(143, 20);
             this.cboConverterMapsList.TabIndex = 0;
             this.ttpCommon.SetToolTip(this.cboConverterMapsList, "选择字符对照表");
             this.cboConverterMapsList.SelectedIndexChanged += new System.EventHandler(this.cboConverterMapsList_SelectedIndexChanged);
@@ -531,7 +531,7 @@
             this.grpConvertMaps.Controls.Add(this.cboConverterMapsList);
             this.grpConvertMaps.Location = new System.Drawing.Point(154, 28);
             this.grpConvertMaps.Name = "grpConvertMaps";
-            this.grpConvertMaps.Size = new System.Drawing.Size(136, 44);
+            this.grpConvertMaps.Size = new System.Drawing.Size(155, 44);
             this.grpConvertMaps.TabIndex = 8;
             this.grpConvertMaps.TabStop = false;
             this.grpConvertMaps.Text = "字符对照表";
