@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<Config>
+  <!-- 字符对照表名称 -->
+  <Name>实用工具对照表</Name>
+  <Converters><!-- 转换器列表元素，可在此设置多个转换器 -->
+    <!-- 转换器元素 Id：转换器ID(数字)，Name：转换器名称(用于显示在转换类型下拉列表上)，SourceMapId：源字符对照表ID，DestMapId：目标字符对照表ID，(注：源字符对照表和目标字符对照表的值的长度必须相同) -->
+    <Converter Id="0" Name="半角转全角" SourceMapId="半角字符" DestMapId="全角字符" />
+	<Converter Id="1" Name="全角转半角" SourceMapId="全角字符" DestMapId="半角字符" />
+    <Converter Id="2" Name="小写数字转大写" SourceMapId="小写数字" DestMapId="大写数字" />
+	<Converter Id="3" Name="大写数字转小写" SourceMapId="大写数字" DestMapId="小写数字" />
+    <Converter Id="4" Name="小写字母转大写" SourceMapId="小写字母" DestMapId="大写字母" />
+	<Converter Id="5" Name="大写字母转小写" SourceMapId="大写字母" DestMapId="小写字母" />
+  </Converters>
+  <Maps><!-- 字符对照表列表元素，可在此设置多个字符对照表 -->
+    <!-- 字符对照表元素 Id：字符对照表ID(可为数字或字符串) Value：字符列表(部分符号请使用HTML转义字符) -->
+	<Map Id="半角字符">! &quot;#$%&amp;'()*+,-./0123456789:;&lt;=&gt;?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~</Map>
+	<Map Id="全角字符">！　＂＃＄％＆＇（）＊＋，－．／０１２３４５６７８９：；＜＝＞？＠ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ［＼］＾＿｀ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ｛｜｝～</Map>
+	<Map Id="小写数字">一二三四五六七八九十</Map>
+	<Map Id="大写数字">壹贰叁肆伍陆柒捌玖拾</Map>
+	<Map Id="小写字母">abcdefghijklmnopqrstuvwxyz</Map>
+	<Map Id="大写字母">ABCDEFGHIJKLMNOPQRSTUVWXYZ</Map>
+  </Maps>
+</Config>

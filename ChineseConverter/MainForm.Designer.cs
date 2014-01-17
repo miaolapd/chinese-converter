@@ -34,7 +34,7 @@
             this.chkIsConvertFileName = new System.Windows.Forms.CheckBox();
             this.cboConvertMethod = new System.Windows.Forms.ComboBox();
             this.grpConvertType = new System.Windows.Forms.GroupBox();
-            this.cboConvertType = new System.Windows.Forms.ComboBox();
+            this.cboConverterType = new System.Windows.Forms.ComboBox();
             this.lblFilePath = new System.Windows.Forms.Label();
             this.txtFileExt = new System.Windows.Forms.TextBox();
             this.lblFileExt = new System.Windows.Forms.Label();
@@ -60,17 +60,18 @@
             this.chkIsTopMost = new System.Windows.Forms.CheckBox();
             this.chkIsExclude = new System.Windows.Forms.CheckBox();
             this.grpRegex = new System.Windows.Forms.GroupBox();
+            this.btnRegexAdd = new System.Windows.Forms.Button();
             this.btnRegexClear = new System.Windows.Forms.Button();
             this.cboRegex = new System.Windows.Forms.ComboBox();
             this.btnRegexHelp = new System.Windows.Forms.Button();
             this.ttpCommon = new System.Windows.Forms.ToolTip(this.components);
             this.cboReadEncoding = new System.Windows.Forms.ComboBox();
             this.btnDestToSource = new System.Windows.Forms.Button();
-            this.lblFileEncoding = new System.Windows.Forms.Label();
             this.btnReload = new System.Windows.Forms.Button();
+            this.cboConverterMapsList = new System.Windows.Forms.ComboBox();
+            this.lblFileEncoding = new System.Windows.Forms.Label();
             this.grpReadEncoding = new System.Windows.Forms.GroupBox();
             this.grpConvertMaps = new System.Windows.Forms.GroupBox();
-            this.cboConvertMaps = new System.Windows.Forms.ComboBox();
             this.grpConvertMethod.SuspendLayout();
             this.grpConvertType.SuspendLayout();
             this.grpDest.SuspendLayout();
@@ -89,7 +90,7 @@
             this.grpConvertMethod.Location = new System.Drawing.Point(296, 28);
             this.grpConvertMethod.Name = "grpConvertMethod";
             this.grpConvertMethod.Size = new System.Drawing.Size(197, 44);
-            this.grpConvertMethod.TabIndex = 2;
+            this.grpConvertMethod.TabIndex = 9;
             this.grpConvertMethod.TabStop = false;
             this.grpConvertMethod.Text = "转换方式";
             // 
@@ -102,7 +103,7 @@
             this.chkIsConvertFileName.Size = new System.Drawing.Size(84, 16);
             this.chkIsConvertFileName.TabIndex = 1;
             this.chkIsConvertFileName.Text = "转换文件名";
-            this.ttpCommon.SetToolTip(this.chkIsConvertFileName, "设置是否对文件名进行简繁转换");
+            this.ttpCommon.SetToolTip(this.chkIsConvertFileName, "设置是否同时对文件名进行字符转换");
             this.chkIsConvertFileName.UseVisualStyleBackColor = true;
             this.chkIsConvertFileName.CheckedChanged += new System.EventHandler(this.chkIsConvertFileName_CheckedChanged);
             // 
@@ -119,34 +120,31 @@
             this.cboConvertMethod.Name = "cboConvertMethod";
             this.cboConvertMethod.Size = new System.Drawing.Size(95, 20);
             this.cboConvertMethod.TabIndex = 0;
+            this.ttpCommon.SetToolTip(this.cboConvertMethod, "设置转换方式");
             this.cboConvertMethod.SelectedIndexChanged += new System.EventHandler(this.cboConvertMethod_SelectedIndexChanged);
             // 
             // grpConvertType
             // 
-            this.grpConvertType.Controls.Add(this.cboConvertType);
+            this.grpConvertType.Controls.Add(this.cboConverterType);
             this.grpConvertType.Location = new System.Drawing.Point(12, 28);
             this.grpConvertType.Name = "grpConvertType";
             this.grpConvertType.Size = new System.Drawing.Size(136, 44);
-            this.grpConvertType.TabIndex = 1;
+            this.grpConvertType.TabIndex = 7;
             this.grpConvertType.TabStop = false;
             this.grpConvertType.Text = "转换类型";
             // 
-            // cboConvertType
+            // cboConverterType
             // 
-            this.cboConvertType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.cboConverterType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.cboConvertType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboConvertType.FormattingEnabled = true;
-            this.cboConvertType.Items.AddRange(new object[] {
-            "转换为简体",
-            "转换为繁体",
-            "转换为火星文"});
-            this.cboConvertType.Location = new System.Drawing.Point(6, 17);
-            this.cboConvertType.Name = "cboConvertType";
-            this.cboConvertType.Size = new System.Drawing.Size(124, 20);
-            this.cboConvertType.TabIndex = 0;
-            this.ttpCommon.SetToolTip(this.cboConvertType, "设置转换类型");
-            this.cboConvertType.SelectedIndexChanged += new System.EventHandler(this.cboConvertType_SelectedIndexChanged);
+            this.cboConverterType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboConverterType.FormattingEnabled = true;
+            this.cboConverterType.Location = new System.Drawing.Point(6, 17);
+            this.cboConverterType.Name = "cboConverterType";
+            this.cboConverterType.Size = new System.Drawing.Size(124, 20);
+            this.cboConverterType.TabIndex = 0;
+            this.ttpCommon.SetToolTip(this.cboConverterType, "设置转换类型");
+            this.cboConverterType.SelectedIndexChanged += new System.EventHandler(this.cboConverterType_SelectedIndexChanged);
             // 
             // lblFilePath
             // 
@@ -156,7 +154,8 @@
             this.lblFilePath.Location = new System.Drawing.Point(12, 582);
             this.lblFilePath.Name = "lblFilePath";
             this.lblFilePath.Size = new System.Drawing.Size(761, 12);
-            this.lblFilePath.TabIndex = 16;
+            this.lblFilePath.TabIndex = 4;
+            this.lblFilePath.UseMnemonic = false;
             // 
             // txtFileExt
             // 
@@ -164,7 +163,7 @@
             this.txtFileExt.MaxLength = 255;
             this.txtFileExt.Name = "txtFileExt";
             this.txtFileExt.Size = new System.Drawing.Size(80, 21);
-            this.txtFileExt.TabIndex = 11;
+            this.txtFileExt.TabIndex = 17;
             this.ttpCommon.SetToolTip(this.txtFileExt, "另存为时，在原文件名和扩展名之间添加指定的后缀名");
             // 
             // lblFileExt
@@ -173,7 +172,7 @@
             this.lblFileExt.Location = new System.Drawing.Point(634, 98);
             this.lblFileExt.Name = "lblFileExt";
             this.lblFileExt.Size = new System.Drawing.Size(53, 12);
-            this.lblFileExt.TabIndex = 10;
+            this.lblFileExt.TabIndex = 16;
             this.lblFileExt.Text = "后缀名：";
             this.ttpCommon.SetToolTip(this.lblFileExt, "另存为时，在原文件名和扩展名之间添加指定的后缀名");
             // 
@@ -182,7 +181,7 @@
             this.btnSaveAs.Location = new System.Drawing.Point(545, 92);
             this.btnSaveAs.Name = "btnSaveAs";
             this.btnSaveAs.Size = new System.Drawing.Size(83, 25);
-            this.btnSaveAs.TabIndex = 9;
+            this.btnSaveAs.TabIndex = 15;
             this.btnSaveAs.Text = "另存为";
             this.ttpCommon.SetToolTip(this.btnSaveAs, "快捷键：Ctrl+Shift+S");
             this.btnSaveAs.UseVisualStyleBackColor = true;
@@ -193,7 +192,7 @@
             this.btnSave.Location = new System.Drawing.Point(456, 92);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(83, 25);
-            this.btnSave.TabIndex = 8;
+            this.btnSave.TabIndex = 14;
             this.btnSave.Text = "保存(覆盖)";
             this.ttpCommon.SetToolTip(this.btnSave, "快捷键：Ctrl+S");
             this.btnSave.UseVisualStyleBackColor = true;
@@ -204,7 +203,7 @@
             this.btnConvert.Location = new System.Drawing.Point(378, 347);
             this.btnConvert.Name = "btnConvert";
             this.btnConvert.Size = new System.Drawing.Size(29, 45);
-            this.btnConvert.TabIndex = 13;
+            this.btnConvert.TabIndex = 3;
             this.btnConvert.Text = ">>";
             this.ttpCommon.SetToolTip(this.btnConvert, "转换文本，快捷键：Ctrl+T");
             this.btnConvert.UseVisualStyleBackColor = true;
@@ -216,7 +215,7 @@
             this.grpDest.Location = new System.Drawing.Point(413, 128);
             this.grpDest.Name = "grpDest";
             this.grpDest.Size = new System.Drawing.Size(360, 447);
-            this.grpDest.TabIndex = 14;
+            this.grpDest.TabIndex = 1;
             this.grpDest.TabStop = false;
             this.grpDest.Text = "转换文本";
             // 
@@ -335,7 +334,7 @@
             this.grpSaveEncoding.Location = new System.Drawing.Point(140, 78);
             this.grpSaveEncoding.Name = "grpSaveEncoding";
             this.grpSaveEncoding.Size = new System.Drawing.Size(122, 44);
-            this.grpSaveEncoding.TabIndex = 3;
+            this.grpSaveEncoding.TabIndex = 12;
             this.grpSaveEncoding.TabStop = false;
             this.grpSaveEncoding.Text = "保存编码";
             // 
@@ -355,7 +354,7 @@
             this.cboSaveEncoding.Name = "cboSaveEncoding";
             this.cboSaveEncoding.Size = new System.Drawing.Size(110, 20);
             this.cboSaveEncoding.TabIndex = 0;
-            this.ttpCommon.SetToolTip(this.cboSaveEncoding, "设置保存文件时使用的编码");
+            this.ttpCommon.SetToolTip(this.cboSaveEncoding, "设置保存文件时使用的编码 (建议使用UTF-8编码)");
             this.cboSaveEncoding.SelectedIndexChanged += new System.EventHandler(this.cboSaveEncoding_SelectedIndexChanged);
             // 
             // chkIsTopMost
@@ -365,7 +364,7 @@
             this.chkIsTopMost.Location = new System.Drawing.Point(701, 601);
             this.chkIsTopMost.Name = "chkIsTopMost";
             this.chkIsTopMost.Size = new System.Drawing.Size(72, 16);
-            this.chkIsTopMost.TabIndex = 15;
+            this.chkIsTopMost.TabIndex = 6;
             this.chkIsTopMost.Text = "总在最前";
             this.ttpCommon.SetToolTip(this.chkIsTopMost, "窗口是否保持最前");
             this.chkIsTopMost.UseVisualStyleBackColor = true;
@@ -378,14 +377,15 @@
             this.chkIsExclude.Location = new System.Drawing.Point(220, 19);
             this.chkIsExclude.Name = "chkIsExclude";
             this.chkIsExclude.Size = new System.Drawing.Size(48, 16);
-            this.chkIsExclude.TabIndex = 3;
+            this.chkIsExclude.TabIndex = 4;
             this.chkIsExclude.Text = "排除";
-            this.ttpCommon.SetToolTip(this.chkIsExclude, "设置符合指定模式的字符串是否不参与简繁转换");
+            this.ttpCommon.SetToolTip(this.chkIsExclude, "设置符合指定模式的字符串是否不参与字符转换");
             this.chkIsExclude.UseVisualStyleBackColor = true;
             this.chkIsExclude.CheckedChanged += new System.EventHandler(this.chkIsExclude_CheckedChanged);
             // 
             // grpRegex
             // 
+            this.grpRegex.Controls.Add(this.btnRegexAdd);
             this.grpRegex.Controls.Add(this.btnRegexClear);
             this.grpRegex.Controls.Add(this.cboRegex);
             this.grpRegex.Controls.Add(this.btnRegexHelp);
@@ -393,19 +393,33 @@
             this.grpRegex.Location = new System.Drawing.Point(499, 28);
             this.grpRegex.Name = "grpRegex";
             this.grpRegex.Size = new System.Drawing.Size(274, 44);
-            this.grpRegex.TabIndex = 4;
+            this.grpRegex.TabIndex = 10;
             this.grpRegex.TabStop = false;
             this.grpRegex.Text = "正则表达式";
+            // 
+            // btnRegexAdd
+            // 
+            this.btnRegexAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRegexAdd.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRegexAdd.Location = new System.Drawing.Point(166, 15);
+            this.btnRegexAdd.Name = "btnRegexAdd";
+            this.btnRegexAdd.Size = new System.Drawing.Size(23, 23);
+            this.btnRegexAdd.TabIndex = 2;
+            this.btnRegexAdd.Text = "+";
+            this.ttpCommon.SetToolTip(this.btnRegexAdd, "添加当前正则表达式到预设列表中");
+            this.btnRegexAdd.UseVisualStyleBackColor = true;
+            this.btnRegexAdd.Click += new System.EventHandler(this.btnRegexAdd_Click);
             // 
             // btnRegexClear
             // 
             this.btnRegexClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRegexClear.Location = new System.Drawing.Point(166, 15);
+            this.btnRegexClear.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnRegexClear.Location = new System.Drawing.Point(141, 15);
             this.btnRegexClear.Name = "btnRegexClear";
             this.btnRegexClear.Size = new System.Drawing.Size(23, 23);
             this.btnRegexClear.TabIndex = 1;
-            this.btnRegexClear.Text = "X";
-            this.ttpCommon.SetToolTip(this.btnRegexClear, "清除正则表达式");
+            this.btnRegexClear.Text = "×";
+            this.ttpCommon.SetToolTip(this.btnRegexClear, "清除正则表达式文本");
             this.btnRegexClear.UseVisualStyleBackColor = true;
             this.btnRegexClear.Click += new System.EventHandler(this.btnRegexClear_Click);
             // 
@@ -416,19 +430,20 @@
             this.cboRegex.FormattingEnabled = true;
             this.cboRegex.Location = new System.Drawing.Point(6, 17);
             this.cboRegex.Name = "cboRegex";
-            this.cboRegex.Size = new System.Drawing.Size(154, 20);
+            this.cboRegex.Size = new System.Drawing.Size(129, 20);
             this.cboRegex.TabIndex = 0;
-            this.ttpCommon.SetToolTip(this.cboRegex, "使用正则表达式，可在符合指定模式的字符串中(或之外)进行简繁转换");
+            this.ttpCommon.SetToolTip(this.cboRegex, "使用正则表达式，可在符合指定模式的字符串中(或之外)进行字符转换");
             this.cboRegex.SelectedIndexChanged += new System.EventHandler(this.cboRegex_SelectedIndexChanged);
             this.cboRegex.KeyDown += new System.Windows.Forms.KeyEventHandler(this.cboRegex_KeyDown);
             // 
             // btnRegexHelp
             // 
             this.btnRegexHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRegexHelp.Font = new System.Drawing.Font("Arial", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnRegexHelp.Location = new System.Drawing.Point(191, 15);
             this.btnRegexHelp.Name = "btnRegexHelp";
             this.btnRegexHelp.Size = new System.Drawing.Size(23, 23);
-            this.btnRegexHelp.TabIndex = 2;
+            this.btnRegexHelp.TabIndex = 3;
             this.btnRegexHelp.Text = "?";
             this.ttpCommon.SetToolTip(this.btnRegexHelp, "查看正则表达式帮助");
             this.btnRegexHelp.UseVisualStyleBackColor = true;
@@ -453,7 +468,7 @@
             this.cboReadEncoding.Location = new System.Drawing.Point(6, 17);
             this.cboReadEncoding.Name = "cboReadEncoding";
             this.cboReadEncoding.Size = new System.Drawing.Size(110, 20);
-            this.cboReadEncoding.TabIndex = 6;
+            this.cboReadEncoding.TabIndex = 0;
             this.ttpCommon.SetToolTip(this.cboReadEncoding, "设置读取文件时使用的编码 (自动选择可识别前四种编码)");
             this.cboReadEncoding.SelectedIndexChanged += new System.EventHandler(this.cboReadEncoding_SelectedIndexChanged);
             // 
@@ -462,11 +477,35 @@
             this.btnDestToSource.Location = new System.Drawing.Point(378, 296);
             this.btnDestToSource.Name = "btnDestToSource";
             this.btnDestToSource.Size = new System.Drawing.Size(29, 45);
-            this.btnDestToSource.TabIndex = 20;
+            this.btnDestToSource.TabIndex = 2;
             this.btnDestToSource.Text = "<<";
-            this.ttpCommon.SetToolTip(this.btnDestToSource, "将转换文本内容放入源文本中");
+            this.ttpCommon.SetToolTip(this.btnDestToSource, "将转换文本放入源文本中，快捷键：Ctrl+D");
             this.btnDestToSource.UseVisualStyleBackColor = true;
             this.btnDestToSource.Click += new System.EventHandler(this.btnDestToSource_Click);
+            // 
+            // btnReload
+            // 
+            this.btnReload.Location = new System.Drawing.Point(268, 92);
+            this.btnReload.Name = "btnReload";
+            this.btnReload.Size = new System.Drawing.Size(75, 25);
+            this.btnReload.TabIndex = 13;
+            this.btnReload.Text = "重新载入";
+            this.ttpCommon.SetToolTip(this.btnReload, "重新载入当前文件内容，快捷键：Ctrl+R");
+            this.btnReload.UseVisualStyleBackColor = true;
+            this.btnReload.Click += new System.EventHandler(this.btnReload_Click);
+            // 
+            // cboConverterMapsList
+            // 
+            this.cboConverterMapsList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cboConverterMapsList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboConverterMapsList.FormattingEnabled = true;
+            this.cboConverterMapsList.Location = new System.Drawing.Point(6, 17);
+            this.cboConverterMapsList.Name = "cboConverterMapsList";
+            this.cboConverterMapsList.Size = new System.Drawing.Size(124, 20);
+            this.cboConverterMapsList.TabIndex = 0;
+            this.ttpCommon.SetToolTip(this.cboConverterMapsList, "选择字符对照表");
+            this.cboConverterMapsList.SelectedIndexChanged += new System.EventHandler(this.cboConverterMapsList_SelectedIndexChanged);
             // 
             // lblFileEncoding
             // 
@@ -474,17 +513,8 @@
             this.lblFileEncoding.Location = new System.Drawing.Point(12, 602);
             this.lblFileEncoding.Name = "lblFileEncoding";
             this.lblFileEncoding.Size = new System.Drawing.Size(360, 12);
-            this.lblFileEncoding.TabIndex = 17;
-            // 
-            // btnReload
-            // 
-            this.btnReload.Location = new System.Drawing.Point(268, 92);
-            this.btnReload.Name = "btnReload";
-            this.btnReload.Size = new System.Drawing.Size(75, 25);
-            this.btnReload.TabIndex = 7;
-            this.btnReload.Text = "重新载入";
-            this.btnReload.UseVisualStyleBackColor = true;
-            this.btnReload.Click += new System.EventHandler(this.btnReload_Click);
+            this.lblFileEncoding.TabIndex = 5;
+            this.lblFileEncoding.UseMnemonic = false;
             // 
             // grpReadEncoding
             // 
@@ -492,31 +522,19 @@
             this.grpReadEncoding.Location = new System.Drawing.Point(12, 78);
             this.grpReadEncoding.Name = "grpReadEncoding";
             this.grpReadEncoding.Size = new System.Drawing.Size(122, 44);
-            this.grpReadEncoding.TabIndex = 18;
+            this.grpReadEncoding.TabIndex = 11;
             this.grpReadEncoding.TabStop = false;
             this.grpReadEncoding.Text = "读取编码";
             // 
             // grpConvertMaps
             // 
-            this.grpConvertMaps.Controls.Add(this.cboConvertMaps);
+            this.grpConvertMaps.Controls.Add(this.cboConverterMapsList);
             this.grpConvertMaps.Location = new System.Drawing.Point(154, 28);
             this.grpConvertMaps.Name = "grpConvertMaps";
             this.grpConvertMaps.Size = new System.Drawing.Size(136, 44);
-            this.grpConvertMaps.TabIndex = 19;
+            this.grpConvertMaps.TabIndex = 8;
             this.grpConvertMaps.TabStop = false;
             this.grpConvertMaps.Text = "字符对照表";
-            // 
-            // cboConvertMaps
-            // 
-            this.cboConvertMaps.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.cboConvertMaps.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboConvertMaps.FormattingEnabled = true;
-            this.cboConvertMaps.Location = new System.Drawing.Point(6, 17);
-            this.cboConvertMaps.Name = "cboConvertMaps";
-            this.cboConvertMaps.Size = new System.Drawing.Size(124, 20);
-            this.cboConvertMaps.TabIndex = 0;
-            this.cboConvertMaps.SelectedIndexChanged += new System.EventHandler(this.cboConvertMaps_SelectedIndexChanged);
             // 
             // MainForm
             // 
@@ -648,7 +666,7 @@
         /// <summary>转换方式下拉列表</summary>
         private System.Windows.Forms.ComboBox cboConvertMethod;
         /// <summary>转换类型下拉列表</summary>
-        private System.Windows.Forms.ComboBox cboConvertType;
+        private System.Windows.Forms.ComboBox cboConverterType;
         /// <summary>清除正则表达式按钮</summary>
         private System.Windows.Forms.Button btnRegexClear;
         /// <summary>读取编码组合框</summary>
@@ -656,9 +674,10 @@
         /// <summary>字符对照表组合框</summary>
         private System.Windows.Forms.GroupBox grpConvertMaps;
         /// <summary>字符对照表下拉列表</summary>
-        private System.Windows.Forms.ComboBox cboConvertMaps;
+        private System.Windows.Forms.ComboBox cboConverterMapsList;
         /// <summary>转换文本To源文本按钮</summary>
         private System.Windows.Forms.Button btnDestToSource;
+        private System.Windows.Forms.Button btnRegexAdd;
     }
 }
 

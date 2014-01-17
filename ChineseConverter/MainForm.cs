@@ -19,15 +19,10 @@ namespace ChineseConverter
     {
         /// <summary>预设正则表达式列表文件名</summary>
         public const string DefaultRegexListFileName = "DefaultRegexList.txt";
-        /// <summary>字符转换对照表文件名</summary>
-        public const string ConvertListFileName = "ConvertList.txt";
-        /// <summary>转换类型枚举</summary>
-        public enum ConvertType { Simplified, Traditional, HuoXingWen };
         /// <summary>转换方式枚举</summary>
         public enum ConvertMethod { ConvertFile, ConvertText };
 
         private string _sourceFilePath = "";
-        private string[] _convertList = null;
         private IdentifyEncoding _identifyEncoding = null;
 
         /// <summary>获取或设置源文件绝对路径</summary>
@@ -35,13 +30,6 @@ namespace ChineseConverter
         {
             get { return _sourceFilePath; }
             set { _sourceFilePath = value; }
-        }
-
-        /// <summary>获取字符转换对照表</summary>
-        private string[] ConvertList
-        {
-            get { return _convertList; }
-            set { _convertList = value; }
         }
 
         /// <summary>获取或设置检测字符编码类</summary>
@@ -59,6 +47,10 @@ namespace ChineseConverter
         private bool ReadSourceFile(string path)
         {
             if (path == String.Empty || !File.Exists(path)) return false;
+            if (cboConvertMethod.SelectedIndex == (int)ConvertMethod.ConvertText)
+            {
+                cboConvertMethod.SelectedIndex = (int)ConvertMethod.ConvertFile;
+            }
             SourceFilePath = path;
             if (IdentifyEncoding == null) IdentifyEncoding = new IdentifyEncoding();
             string content = "";
@@ -81,7 +73,7 @@ namespace ChineseConverter
                 SourceFilePath = "";
                 return false;
             }
-            if (CheckNewLineType(content) == 0)
+            if (Tools.CheckNewLineType(content) == 0)
             {
                 content = content.Replace("\n", "\r\n");
             }
@@ -101,7 +93,7 @@ namespace ChineseConverter
             if (path == String.Empty) return false;
             if (File.Exists(path))
             {
-                if (!SetFileNotReadOnly(path)) return false;
+                if (!Tools.SetFileNotReadOnly(path)) return false;
             }
             try
             {
@@ -173,16 +165,13 @@ namespace ChineseConverter
         /// <summary>
         /// 转换文本
         /// </summary>
-        private void ConvertText()
+        private void ConvertSourceToDestText()
         {
+            if (cboConverterType.SelectedIndex == -1) return;
             string sourceContent = txtSource.Text;
-            if (sourceContent == String.Empty)
-            {
-                txtDest.Text = "";
-                return;
-            }
             string destContent = "";
-            ConvertType convertType = (ConvertType)cboConvertType.SelectedIndex;
+            ConverterMaps converterMaps = (ConverterMaps)cboConverterMapsList.SelectedItem;
+            Converter converter = (Converter)cboConverterType.SelectedItem;
             if (cboRegex.Text.Trim() != String.Empty)
             {
                 Regex regex = null;
@@ -199,82 +188,47 @@ namespace ChineseConverter
                 }
                 if (chkIsExclude.Checked)
                 {
-                    StringBuilder strBuilder = new StringBuilder(ConvertChinese(sourceContent, convertType));
+                    StringBuilder strBuilder = new StringBuilder(ConverterMapsList.ConvertText(sourceContent, converterMaps.Maps,
+                        converter.SourceMapId, converter.DestMapId));
                     foreach (Match match in regex.Matches(sourceContent))
                     {
-                        strBuilder.Replace(ConvertChinese(match.Value, convertType), match.Value);
+                        strBuilder.Replace(ConverterMapsList.ConvertText(match.Value, converterMaps.Maps, converter.SourceMapId, converter.DestMapId),
+                            match.Value);
                     }
                     destContent = strBuilder.ToString();
                 }
                 else
                 {
-                    destContent = regex.Replace(sourceContent, match => ConvertChinese(match.Value, convertType));
+                    destContent = regex.Replace(sourceContent, match =>
+                        ConverterMapsList.ConvertText(match.Value, converterMaps.Maps, converter.SourceMapId, converter.DestMapId));
                 }
             }
             else
             {
-                destContent = ConvertChinese(sourceContent, convertType);
+                destContent = ConverterMapsList.ConvertText(sourceContent, converterMaps.Maps, converter.SourceMapId, converter.DestMapId);
             }
             txtDest.Text = destContent;
         }
 
         /// <summary>
-        /// 将文本转换为指定的文字类型
+        /// 读取字符对照表配置列表
         /// </summary>
-        /// <param name="content">要转换的文本</param>
-        /// <param name="convertType">转换类型</param>
-        /// <returns>转换后的文本</returns>
-        private string ConvertChinese(string content, ConvertType convertType)
+        private void ReadConverterMapsList()
         {
-            StringBuilder strBuilder = new StringBuilder(content);
-            for (int i = 0; i < ConvertList[(int)convertType].Length; i++)
+            if (!ConverterMapsList.ReadConverterMapsList())
             {
-                if (convertType == ConvertType.HuoXingWen)
-                {
-                    strBuilder.Replace(ConvertList[(int)ConvertType.Simplified][i], ConvertList[(int)ConvertType.HuoXingWen][i]);
-                    strBuilder.Replace(ConvertList[(int)ConvertType.Traditional][i], ConvertList[(int)ConvertType.HuoXingWen][i]);
-                }
-                else if (convertType == ConvertType.Traditional)
-                {
-                    strBuilder.Replace(ConvertList[(int)ConvertType.Simplified][i], ConvertList[(int)ConvertType.Traditional][i]);
-                }
-                else
-                {
-                    strBuilder.Replace(ConvertList[(int)ConvertType.Traditional][i], ConvertList[(int)ConvertType.Simplified][i]);
-                }
+                ShowErrorMsg("字符对照表读取失败！");
+                return;
             }
-            return strBuilder.ToString();
-        }
-
-        /// <summary>
-        /// 读取转换列表
-        /// </summary>
-        /// <returns>是否读取成功</returns>
-        private bool ReadConvertList()
-        {
-            string path = Application.StartupPath + "\\" + ConvertListFileName;
-            if (!File.Exists(path)) return false;
-            string content = "";
-            try
-            {
-                content = File.ReadAllText(path, Encoding.UTF8);
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-            ConvertList = content.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-            if (ConvertList.Length < 2) return false;
-            if (ConvertList[0].Length != ConvertList[1].Length) return false;
-            if (ConvertList.Length == 3)
-            {
-                if (ConvertList[0].Length != ConvertList[2].Length) return false;
-            }
-            else
-            {
-                cboConvertType.Items.RemoveAt((int)ConvertType.HuoXingWen);
-            }
-            return true;
+            cboConverterMapsList.Tag = true;
+            BindingSource bs = new BindingSource();
+            bs.DataSource = ConverterMapsList.MapsList;
+            cboConverterMapsList.DataSource = bs;
+            cboConverterMapsList.DisplayMember = "Name";
+            cboConverterMapsList.ValueMember = "ConfigPath";
+            cboConverterMapsList.SelectedIndex = 0;
+            cboConverterMapsList.Tag = false;
+            cboConverterMapsList_SelectedIndexChanged(null, null);
         }
 
         /// <summary>
@@ -283,8 +237,11 @@ namespace ChineseConverter
         /// <returns>是否转换成功</returns>
         private bool ConvertFileName()
         {
+            if (cboConverterType.SelectedIndex == -1) return false;
             if (SourceFilePath == String.Empty || !File.Exists(SourceFilePath)) return false;
-            string destFilePath = ConvertChinese(SourceFilePath, (ConvertType)cboConvertType.SelectedIndex);
+            ConverterMaps converterMaps = (ConverterMaps)cboConverterMapsList.SelectedItem;
+            Converter converter = (Converter)cboConverterType.SelectedItem;
+            string destFilePath = ConverterMapsList.ConvertText(SourceFilePath, converterMaps.Maps, converter.SourceMapId, converter.DestMapId);
             if (SourceFilePath == destFilePath)
             {
                 return true;
@@ -307,29 +264,6 @@ namespace ChineseConverter
         }
 
         /// <summary>
-        /// 取消指定文件只读属性
-        /// </summary>
-        /// <param name="path">文件路径</param>
-        /// <returns>是否修改成功</returns>
-        public static bool SetFileNotReadOnly(string path)
-        {
-            if (!File.Exists(path)) return true;
-            try
-            {
-                FileInfo fileInfo = new FileInfo(path);
-                if (fileInfo.IsReadOnly)
-                {
-                    fileInfo.IsReadOnly = false;
-                }
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-            return true;
-        }
-
-        /// <summary>
         /// 读取预设正则表达式列表
         /// </summary>
         private void ReadDefaultRegexList()
@@ -337,7 +271,7 @@ namespace ChineseConverter
             string[] regexList = null;
             try
             {
-                regexList = File.ReadAllText(Application.StartupPath + "\\" + DefaultRegexListFileName, Encoding.UTF8)
+                regexList = File.ReadAllText(Tools.AppDirPath + DefaultRegexListFileName, Encoding.UTF8)
                     .Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             }
             catch (Exception) { }
@@ -353,13 +287,22 @@ namespace ChineseConverter
             {
                 ShowErrorMsg("读取配置文件失败！");
             }
+            for (int i = 0; i < cboConverterMapsList.Items.Count; i++)
+            {
+                ConverterMaps converterMaps = (ConverterMaps)cboConverterMapsList.Items[i];
+                if (AppConfig.ConverterMapsPath.ToLower() == Path.GetFileName(converterMaps.ConfigPath.ToLower()))
+                {
+                    cboConverterMapsList.SelectedIndex = i;
+                    break;
+                }
+            }
             try
             {
-                cboConvertType.SelectedIndex = AppConfig.ConvertType;
+                cboConverterType.SelectedIndex = AppConfig.ConvertType;
             }
             catch (ArgumentOutOfRangeException)
             {
-                cboConvertType.SelectedIndex = 0;
+                cboConverterType.SelectedIndex = -1;
             }
             try
             {
@@ -382,18 +325,6 @@ namespace ChineseConverter
             txtFileExt.Text = AppConfig.FileExt;
             chkIsTopMost.Checked = AppConfig.IsTopMost;
             cboReadEncoding.SelectedIndex = 0;
-        }
-
-        /// <summary>
-        /// 检测换行格式
-        /// </summary>
-        /// <param name="content">文本内容</param>
-        /// <returns>换行格式 (-1: 无换行, 0: Unix/Mac, 1: Windows)</returns>
-        private int CheckNewLineType(string content)
-        {
-            if (content.IndexOf('\n') == -1) return -1;
-            if (content.IndexOf("\r\n") >= 0) return 1;
-            else return 0;
         }
 
         /// <summary>
@@ -424,19 +355,16 @@ namespace ChineseConverter
         /// </summary>
         private void MainForm_Load(object sender, EventArgs e)
         {
-            if (!ReadConvertList())
-            {
-                ShowErrorMsg("字符转换对照表读取失败！\r\n可能原因：文件未找到、各行字符数不一致");
-                Close();
-                return;
-            }
+            Tag = Size;
+            ReadConverterMapsList();
             ReadDefaultRegexList();
             ReadConfig();
             if (Environment.GetCommandLineArgs().Length > 1)
             {
                 if (ReadSourceFile(Environment.GetCommandLineArgs()[1]))
                 {
-                    ConvertText();
+                    ConvertSourceToDestText();
+                    txtSource.Select(0, 0);
                 }
             }
             else
@@ -464,10 +392,9 @@ namespace ChineseConverter
         /// </summary>
         private void MainForm_DragDrop(object sender, DragEventArgs e)
         {
-            if (cboConvertMethod.SelectedIndex == (int)ConvertMethod.ConvertText) cboConvertMethod.SelectedIndex = (int)ConvertMethod.ConvertFile;
             if (ReadSourceFile(((string[])e.Data.GetData(DataFormats.FileDrop))[0]))
             {
-                ConvertText();
+                ConvertSourceToDestText();
             }
         }
 
@@ -496,6 +423,24 @@ namespace ChineseConverter
                         }
                     }
                     break;
+                case (int)Keys.R:
+                    if (e.Control)
+                    {
+                        if (btnReload.Enabled) btnReload_Click(null, null);
+                    }
+                    break;
+                case (int)Keys.T:
+                    if (e.Control)
+                    {
+                        if (btnConvert.Enabled) btnConvert_Click(null, null);
+                    }
+                    break;
+                case (int)Keys.D:
+                    if (e.Control)
+                    {
+                        if (btnDestToSource.Enabled) btnDestToSource_Click(null, null);
+                    }
+                    break;
             }
         }
 
@@ -504,7 +449,15 @@ namespace ChineseConverter
         /// </summary>
         private void MainForm_Resize(object sender, EventArgs e)
         {
-
+            if (!(Tag is Size)) return;
+            Size size = Size - (Size)Tag;
+            size.Width /= 2;
+            grpSource.Size += size;
+            grpDest.Location = new Point(grpDest.Location.X + size.Width, grpDest.Location.Y);
+            grpDest.Size += size;
+            btnDestToSource.Location = new Point(btnDestToSource.Location.X + size.Width, btnDestToSource.Location.Y + size.Height / 2);
+            btnConvert.Location = new Point(btnConvert.Location.X + size.Width, btnConvert.Location.Y + size.Height / 2);
+            Tag = Size;
         }
 
         /// <summary>
@@ -514,7 +467,7 @@ namespace ChineseConverter
         {
             if (ReadSourceFile(SourceFilePath))
             {
-                ConvertText();
+                btnConvert_Click(null, null);
             }
         }
 
@@ -570,7 +523,7 @@ namespace ChineseConverter
         {
             if (cboConvertMethod.SelectedIndex == (int)ConvertMethod.ConvertFile && SourceFilePath == String.Empty)
                 cboConvertMethod.SelectedIndex = (int)ConvertMethod.ConvertText;
-            ConvertText();
+            ConvertSourceToDestText();
         }
 
         /// <summary>
@@ -578,16 +531,22 @@ namespace ChineseConverter
         /// </summary>
         private void btnDestToSource_Click(object sender, EventArgs e)
         {
-
+            txtSource.Text = txtDest.Text;
+            btnConvert_Click(null, null);
         }
 
         /// <summary>
         /// 当转换类型下拉列表选择项改变时发生
         /// </summary>
-        private void cboConvertType_SelectedIndexChanged(object sender, EventArgs e)
+        private void cboConverterType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ConvertText();
-            AppConfig.ConvertType = cboConvertType.SelectedIndex;
+            if (cboConverterType.SelectedIndex == -1 ||
+                Tools.CheckControlDataSourceIsPreparing(cboConverterType.Tag))
+            {
+                return;
+            }
+            ConvertSourceToDestText();
+            AppConfig.ConvertType = cboConverterType.SelectedIndex;
         }
 
         /// <summary>
@@ -605,6 +564,7 @@ namespace ChineseConverter
                 lblFilePath.Text = "";
                 lblFileEncoding.Text = "";
                 cboReadEncoding.Enabled = false;
+                chkIsConvertFileName.Enabled = false;
             }
             else
             {
@@ -615,6 +575,7 @@ namespace ChineseConverter
                 txtSource.Clear();
                 txtDest.Clear();
                 cboReadEncoding.Enabled = true;
+                chkIsConvertFileName.Enabled = true;
             }
             AppConfig.ConvertMethod = cboConvertMethod.SelectedIndex;
         }
@@ -643,6 +604,30 @@ namespace ChineseConverter
             cboRegex.Text = "";
             cboRegex.Focus();
             btnConvert_Click(null, null);
+        }
+
+        /// <summary>
+        /// 当单击加入正则表达式按钮时发生
+        /// </summary>
+        private void btnRegexAdd_Click(object sender, EventArgs e)
+        {
+            string regex = cboRegex.Text.Trim();
+            if (regex == String.Empty) return;
+            cboRegex.Items.Add(regex);
+            string path = Tools.AppDirPath + DefaultRegexListFileName;
+            if (!File.Exists(path)) return;
+            try
+            {
+                string content = File.ReadAllText(path, Encoding.UTF8);
+                if (!content.EndsWith("\r\n")) content += "\r\n";
+                content += regex + "\r\n";
+                File.WriteAllText(path, content, Encoding.UTF8);
+            }
+            catch (Exception)
+            {
+                ShowErrorMsg("预设正则表达式列表文件写入失败！");
+                return;
+            }
         }
 
         /// <summary>
@@ -688,9 +673,6 @@ namespace ChineseConverter
                 case (int)Keys.A:
                     if (e.Control) textBox.SelectAll();
                     break;
-                case (int)Keys.T:
-                    if (e.Control) btnConvert_Click(null, null);
-                    break;
             }
         }
 
@@ -722,16 +704,31 @@ namespace ChineseConverter
         {
             if (SourceFilePath != String.Empty)
             {
-                if (ReadSourceFile(SourceFilePath)) ConvertText();
+                if (ReadSourceFile(SourceFilePath)) btnConvert_Click(null, null);
             }
         }
 
         /// <summary>
         /// 当字符对照表下拉列表选择项改变时发生
         /// </summary>
-        private void cboConvertMaps_SelectedIndexChanged(object sender, EventArgs e)
+        private void cboConverterMapsList_SelectedIndexChanged(object sender, EventArgs e)
         {
-
+            if (cboConverterMapsList.SelectedIndex == -1 ||
+                Tools.CheckControlDataSourceIsPreparing(cboConverterMapsList.Tag))
+            {
+                return;
+            }
+            ConverterMaps converterMaps = (ConverterMaps)cboConverterMapsList.SelectedItem;
+            cboConverterType.Tag = true;
+            BindingSource bs = new BindingSource();
+            bs.DataSource = converterMaps.Converters.Values;
+            cboConverterType.DataSource = bs;
+            cboConverterType.DisplayMember = "Name";
+            cboConverterType.ValueMember = "Id";
+            cboConverterType.SelectedIndex = 0;
+            cboConverterType.Tag = false;
+            cboConverterType_SelectedIndexChanged(null, null);
+            AppConfig.ConverterMapsPath = cboConverterMapsList.SelectedValue.ToString();
         }
 
         #region 主菜单事件
@@ -743,7 +740,6 @@ namespace ChineseConverter
         {
             if (ofdOpenFile.ShowDialog() == DialogResult.OK)
             {
-                cboConvertMethod.SelectedIndex = (int)ConvertMethod.ConvertFile;
                 if (!ReadSourceFile(ofdOpenFile.FileName))
                 {
                     ShowErrorMsg("文件读取失败！");
@@ -751,7 +747,7 @@ namespace ChineseConverter
                 }
                 else
                 {
-                    ConvertText();
+                    ConvertSourceToDestText();
                 }
             }
         }
@@ -808,6 +804,5 @@ namespace ChineseConverter
         }
 
         #endregion
-
     }
 }

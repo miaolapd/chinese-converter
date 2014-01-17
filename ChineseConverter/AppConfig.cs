@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace ChineseConverter
 {
@@ -17,6 +18,7 @@ namespace ChineseConverter
 
         /// <summary>当前<see cref="XmlConfig"/>对象</summary>
         private static XmlConfig Config = null;
+        private static string _converterMapsPath = "";
         private static int _convertType = 0;
         private static int _convertMethod = 0;
         private static int _saveEncoding = 0;
@@ -30,19 +32,21 @@ namespace ChineseConverter
         /// </summary>
         public struct ConfigInfo
         {
-            /// <summary>转换类型配置项名称</summary>
-            public const string ConvertType = "ConvertType";
-            /// <summary>转换方式配置项名称</summary>
+            /// <summary>字符对照表配置文件绝对路径元素名</summary>
+            public const string ConverterMapsPath = "ConverterMapsPath";
+            /// <summary>转换类型元素名</summary>
+            public const string ConverterType = "ConverterType";
+            /// <summary>转换方式元素名</summary>
             public const string ConvertMethod = "ConvertMethod";
-            /// <summary>保存编码配置项名称</summary>
+            /// <summary>保存编码元素名</summary>
             public const string SaveEncoding = "SaveEncoding";
-            /// <summary>文件后缀名配置项名称</summary>
+            /// <summary>文件后缀名元素名</summary>
             public const string FileExt = "FileExt";
-            /// <summary>是否排除配置项名称</summary>
+            /// <summary>是否排除元素名</summary>
             public const string IsExclude = "IsExclude";
-            /// <summary>是否总在最前配置项名称</summary>
+            /// <summary>是否总在最前元素名</summary>
             public const string IsTopMost = "IsTopMost";
-            /// <summary>是否转换文件名配置项名称</summary>
+            /// <summary>是否转换文件名元素名</summary>
             public const string IsConvertFileName = "IsConvertFileName";
         }
 
@@ -53,7 +57,20 @@ namespace ChineseConverter
         {
             get
             {
-                return System.Windows.Forms.Application.StartupPath + "\\" + ConfigFileName;
+                return Tools.AppDirPath + ConfigFileName;
+            }
+        }
+
+        /// <summary>
+        /// 获取或设置字符对照表配置文件绝对路径
+        /// </summary>
+        public static string ConverterMapsPath
+        {
+            get { return _converterMapsPath; }
+            set
+            {
+                _converterMapsPath = value;
+                if (Config != null) Config.SetValue(ConfigInfo.ConverterMapsPath, Path.GetFileName(value));
             }
         }
 
@@ -65,7 +82,8 @@ namespace ChineseConverter
             get { return _convertType; }
             set
             {
-                if (Config != null) Config.SetValue(ConfigInfo.ConvertType, value);
+                _convertType = value;
+                if (Config != null) Config.SetValue(ConfigInfo.ConverterType, value);
             }
         }
 
@@ -77,6 +95,7 @@ namespace ChineseConverter
             get { return _convertMethod; }
             set
             {
+                _convertMethod = value;
                 if (Config != null) Config.SetValue(ConfigInfo.ConvertMethod, value);
             }
         }
@@ -89,6 +108,7 @@ namespace ChineseConverter
             get { return _saveEncoding; }
             set
             {
+                _saveEncoding = value;
                 if (Config != null) Config.SetValue(ConfigInfo.SaveEncoding, value);
             }
         }
@@ -101,6 +121,7 @@ namespace ChineseConverter
             get { return _fileExt; }
             set
             {
+                _fileExt = value;
                 if (Config != null) Config.SetValue(ConfigInfo.FileExt, value);
             }
         }
@@ -113,6 +134,7 @@ namespace ChineseConverter
             get { return _isExclude; }
             set
             {
+                _isExclude = value;
                 if (Config != null) Config.SetValue(ConfigInfo.IsExclude, value);
             }
         }
@@ -125,6 +147,7 @@ namespace ChineseConverter
             get { return _isTopMost; }
             set
             {
+                _isTopMost = value;
                 if (Config != null) Config.SetValue(ConfigInfo.IsTopMost, value);
             }
         }
@@ -137,6 +160,7 @@ namespace ChineseConverter
             get { return _isConvertFileName; }
             set
             {
+                _isConvertFileName = value;
                 if (Config != null) Config.SetValue(ConfigInfo.IsConvertFileName, value);
             }
         }
@@ -149,13 +173,14 @@ namespace ChineseConverter
         {
             try
             {
-                Config = new XmlConfig(ConfigPath);
+                Config = new XmlConfig(ConfigPath, true);
             }
             catch (ApplicationException)
             {
                 return false;
             }
-            _convertType = Config.GetValue(ConfigInfo.ConvertType, 0);
+            _converterMapsPath = Config.GetValue(ConfigInfo.ConverterMapsPath, "");
+            _convertType = Config.GetValue(ConfigInfo.ConverterType, 0);
             _convertMethod = Config.GetValue(ConfigInfo.ConvertMethod, 0);
             _saveEncoding = Config.GetValue(ConfigInfo.SaveEncoding, 0);
             _fileExt = Config.GetValue(ConfigInfo.FileExt, DefaultFileExt);

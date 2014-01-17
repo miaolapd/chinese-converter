@@ -17,8 +17,7 @@ namespace ChineseConverter
 
         private readonly string _configPath;
         private readonly string _rootName;
-        /// <summary>当前<see cref="XDocument"/>对象</summary>
-        private XDocument Document = null;
+        private readonly XDocument _document = null;
 
         /// <summary>
         /// 获取当前配置文件绝对路径
@@ -26,6 +25,14 @@ namespace ChineseConverter
         public string ConfigPath
         {
             get { return _configPath; }
+        }
+
+        /// <summary>
+        /// 获取当前配置文件的<see cref="XDocument"/>对象
+        /// </summary>
+        public XDocument Document
+        {
+            get { return _document; }
         }
 
         /// <summary>
@@ -45,38 +52,35 @@ namespace ChineseConverter
         }
 
         /// <summary>
-        /// 根据指定配置文件路径创建带有默认根元素名称的<see cref="XmlConfig"/>类新实例
+        /// 根据指定配置文件路径和根元素名称创建<see cref="XmlConfig"/>类新实例，可以指示加载失败时是否创建新配置文件
         /// </summary>
         /// <param name="configPath">配置文件绝对路径</param>
-        /// <exception cref="System.ApplicationException"></exception>
-        public XmlConfig(string configPath)
-            : this(configPath, DefaultRootName)
-        {
-            
-        }
-
-        /// <summary>
-        /// 根据指定配置文件路径和指定根元素名称创建<see cref="XmlConfig"/>类新实例
-        /// </summary>
-        /// <param name="configPath">配置文件绝对路径</param>
+        /// <param name="isOverWrite">加载失败时是否创建新配置文件</param>
         /// <param name="rootName">根元素名称</param>
         /// <exception cref="System.ApplicationException"></exception>
-        public XmlConfig(string configPath, string rootName)
+        public XmlConfig(string configPath, bool isOverWrite = false, string rootName = DefaultRootName)
         {
             _configPath = configPath;
             _rootName = rootName;
             try
             {
-                Document = XDocument.Load(ConfigPath);
+                _document = XDocument.Load(ConfigPath);
             }
             catch (Exception)
             {
-                if (!CreateConfigFile()) throw new ApplicationException("创建配置文件失败！");
-                try
+                if (isOverWrite)
                 {
-                    Document = XDocument.Load(ConfigPath);
+                    if (!CreateConfigFile()) throw new ApplicationException("创建配置文件失败！");
+                    try
+                    {
+                        _document = XDocument.Load(ConfigPath);
+                    }
+                    catch (Exception)
+                    {
+                        throw new ApplicationException("加载配置文件失败！");
+                    }
                 }
-                catch (Exception)
+                else
                 {
                     throw new ApplicationException("加载配置文件失败！");
                 }
@@ -233,9 +237,44 @@ namespace ChineseConverter
         /// <returns>属性的值</returns>
         public string GetAttributeValue(string elementName, string attributeName, string defaultValue)
         {
+            return GetAttributeValue(Root.Element(elementName), attributeName, defaultValue);
+        }
+
+        /// <summary>
+        /// 获取指定元素的指定属性的值
+        /// </summary>
+        /// <param name="elementName">元素名称</param>
+        /// <param name="attributeName">属性名称</param>
+        /// <param name="defaultValue">默认值</param>
+        /// <returns>属性的值</returns>
+        public int GetAttributeValue(string elementName, string attributeName, int defaultValue)
+        {
+            return GetAttributeValue(Root.Element(elementName), attributeName, defaultValue);
+        }
+
+        /// <summary>
+        /// 获取指定元素的指定属性的值
+        /// </summary>
+        /// <param name="elementName">元素名称</param>
+        /// <param name="attributeName">属性名称</param>
+        /// <param name="defaultValue">默认值</param>
+        /// <returns>属性的值</returns>
+        public bool GetAttributeValue(string elementName, string attributeName, bool defaultValue)
+        {
+            return GetAttributeValue(Root.Element(elementName), attributeName, defaultValue);
+        }
+
+        /// <summary>
+        /// 获取指定元素的指定属性的值
+        /// </summary>
+        /// <param name="elementName">元素名称</param>
+        /// <param name="attributeName">属性名称</param>
+        /// <param name="defaultValue">默认值</param>
+        /// <returns>属性的值</returns>
+        public string GetAttributeValue(XElement element, string attributeName, string defaultValue)
+        {
             try
             {
-                XElement element = Root.Element(elementName);
                 if (element != null)
                 {
                     XAttribute attribute = element.Attribute(attributeName);
@@ -256,15 +295,15 @@ namespace ChineseConverter
         /// <summary>
         /// 获取指定元素的指定属性的值
         /// </summary>
-        /// <param name="elementName">元素名称</param>
+        /// <param name="element">元素名称</param>
         /// <param name="attributeName">属性名称</param>
         /// <param name="defaultValue">默认值</param>
         /// <returns>属性的值</returns>
-        public int GetAttributeValue(string elementName, string attributeName, int defaultValue)
+        public int GetAttributeValue(XElement element, string attributeName, int defaultValue)
         {
             try
             {
-                return Convert.ToInt32(GetAttributeValue(elementName, attributeName, defaultValue.ToString()));
+                return Convert.ToInt32(GetAttributeValue(element, attributeName, defaultValue.ToString()));
             }
             catch (Exception)
             {
@@ -275,15 +314,15 @@ namespace ChineseConverter
         /// <summary>
         /// 获取指定元素的指定属性的值
         /// </summary>
-        /// <param name="elementName">元素名称</param>
+        /// <param name="element">元素名称</param>
         /// <param name="attributeName">属性名称</param>
         /// <param name="defaultValue">默认值</param>
         /// <returns>属性的值</returns>
-        public bool GetAttributeValue(string elementName, string attributeName, bool defaultValue)
+        public bool GetAttributeValue(XElement element, string attributeName, bool defaultValue)
         {
             try
             {
-                return Convert.ToBoolean(GetAttributeValue(elementName, attributeName, defaultValue.ToString()));
+                return Convert.ToBoolean(GetAttributeValue(element, attributeName, defaultValue.ToString()));
             }
             catch (Exception)
             {
@@ -358,7 +397,7 @@ namespace ChineseConverter
             }
             catch (Exception)
             {
-                return null;
+                return new List<XElement>();
             }
         }
 
@@ -375,7 +414,7 @@ namespace ChineseConverter
             }
             catch (Exception)
             {
-                return null;
+                return new List<XElement>();
             }
         }
 
@@ -393,7 +432,7 @@ namespace ChineseConverter
             }
             catch (Exception)
             {
-                return null;
+                return new List<XAttribute>();
             }
         }
 
@@ -410,7 +449,7 @@ namespace ChineseConverter
             }
             catch (Exception)
             {
-                return null;
+                return new List<XAttribute>();
             }
         }
 
