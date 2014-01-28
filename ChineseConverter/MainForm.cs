@@ -177,7 +177,7 @@ namespace ChineseConverter
                 Regex regex = null;
                 try
                 {
-                    regex = new Regex(cboRegex.Text.Trim(), RegexOptions.IgnoreCase | RegexOptions.Multiline);
+                    regex = new Regex(cboRegex.Text, RegexOptions.IgnoreCase | RegexOptions.Multiline);
                 }
                 catch (Exception)
                 {
@@ -192,6 +192,7 @@ namespace ChineseConverter
                         converter.SourceMapId, converter.DestMapId));
                     foreach (Match match in regex.Matches(sourceContent))
                     {
+                        if (match.Value == String.Empty) continue;
                         strBuilder.Replace(ConverterMapsList.ConvertText(match.Value, converterMaps.Maps, converter.SourceMapId, converter.DestMapId),
                             match.Value);
                     }
