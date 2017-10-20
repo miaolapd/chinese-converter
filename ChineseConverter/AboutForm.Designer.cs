@@ -60,10 +60,10 @@
             this.lnkAppUrl.AutoSize = true;
             this.lnkAppUrl.Location = new System.Drawing.Point(82, 60);
             this.lnkAppUrl.Name = "lnkAppUrl";
-            this.lnkAppUrl.Size = new System.Drawing.Size(269, 12);
+            this.lnkAppUrl.Size = new System.Drawing.Size(275, 12);
             this.lnkAppUrl.TabIndex = 10;
             this.lnkAppUrl.TabStop = true;
-            this.lnkAppUrl.Text = "https://code.google.com/p/chinese-converter/";
+            this.lnkAppUrl.Text = "https://github.com/miaolapd/chinese-converter";
             this.lnkAppUrl.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkAppUrl_LinkClicked);
             // 
             // lblAppName

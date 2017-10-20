@@ -4,10 +4,10 @@
 用于简繁转换的小工具，将文件拖拽到窗口中即可方便地进行文字转换（也可在文本框中输入字符串进行转换）。
 但其用途不仅限于此，它还可对字符进行各种类型的转换，甚至可以自定义转换字符对照表。
 它还可以自动识别文件编码，设置保存文件的编码，可以同时转换文件名，可以使用正则表达式在符合指定模式的字符串中(或之外)进行字符转换。
-运行需.NET Framework 3.5框架，如出现运行错误，请下载所需组件并安装：http://www.microsoft.com/zh-cn/download/details.aspx?id=25150
+运行需.NET Framework 4框架，如出现运行错误，请下载所需组件并安装：https://www.microsoft.com/zh-cn/download/details.aspx?id=17718
 
 =============================================
 源代码采用Apache License 2.0发布
-项目地址：https://code.google.com/p/chinese-converter/
+项目地址：https://github.com/miaolapd/chinese-converter
 
 程序设计：喵拉布丁
