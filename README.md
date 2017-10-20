@@ -7,7 +7,7 @@
 运行需[.NET Framework 4框架](https://www.microsoft.com/zh-cn/download/details.aspx?id=17718)，如出现运行错误，请下载所需组件并安装
 
 ## 下载地址
-[简繁转换器 V1.2.0.zip](https://github.com/miaolapd/chinese-converter/raw/master/Releases/%E7%AE%80%E7%B9%81%E8%BD%AC%E6%8D%A2%E5%99%A8%20V1.2.0.zip)
+[简繁转换器 V1.2.0.zip](https://github.com/miaolapd/chinese-converter/raw/master/Releases/%E7%AE%80%E7%B9%81%E8%BD%AC%E6%8D%A2%E5%99%A8_V1.2.0.zip)
 
 ## License
 [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
